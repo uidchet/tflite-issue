@@ -13,41 +13,23 @@ import tensorflow_addons as tfa
 import numpy as np
 
 class Model:
-    def __init__(self, config):
-        self.config = config
+    def __init__(self):
         #Multiworker stratergy
         self.strategy = tf.distribute.MirroredStrategy()
         self.multiworker_strategy = tf.distribute.experimental.MultiWorkerMirroredStrategy()
-        # model losses
-        # self.depth_map_loss = Error()
-        # model saving setting
-        self.last_epoch = 0
-        self.checkpoint_manager = []
-        # loss function
-        #self.fl=euc_loss()
-        # batch per replica
-        self.BATCH_SIZE_PER_REPLICA=self.config.BATCH_SIZE_PER_REPLICA
+        
+        self.BATCH_SIZE_PER_REPLICA= 8
         # Compute global batch size using number of replicas.
         self.global_batch_size = (self.BATCH_SIZE_PER_REPLICA * self.strategy.num_replicas_in_sync)
 
-        #checkpoint
-        self.checkpoint_dir = os.path.join(self.config.LOG_DIR,self.config.SESSION_ID)
-
+        
         # model and optimizer initialization
         with self.strategy.scope():
             self.depnet = depnet()
             #print(self.depnet.variables)
             # model optimizer
-            self.depnet_op = tf.compat.v1.train.AdamOptimizer(config.LEARNING_RATE, beta1=0.5)
-            # self.checkpoint = tf.train.Checkpoint(depnet=self.depnet,depnet_optimizer=self.depnet_op)
-            # self.checkpoint_manager = tf.train.CheckpointManager(self.checkpoint, self.checkpoint_dir, max_to_keep=30)
-            # last_checkpoint = self.checkpoint_manager.latest_checkpoint
-            # self.checkpoint.restore(last_checkpoint)
-            # if last_checkpoint:
-            #     self.last_epoch = int(last_checkpoint.split('-')[-1])
-            #     print("Restored from {}".format(last_checkpoint))
-            # else:
-            #     print("Initializing from scratch.")
+            self.depnet_op = tf.compat.v1.train.AdamOptimizer(0.001, beta1=0.5)
+            
 
 
     @tf.function
@@ -98,29 +80,10 @@ class Model:
                 iterator = iter(dist_dataset)
                 for step in range(step_per_epoch):
                     dep_map_loss =self.train(next(iterator))
-                    # avg_loss=self.depth_map_loss(dep_map_loss)
-                    # display loss
-                    # print('Epoch {:d}-{:d}/{:d}: Map:{:.6f}'.format(epoch + 1, step + 1, step_per_epoch,avg_loss), end='\r')
-                # #plot losses
-                # mlflow_plot.plot(epoch,avg_loss,self.config.MLFLOW_ARTIFACTS_DIR)
-                # # time of one epoch
-                # print('\n    Time taken for epoch {} is {:3g} sec'.format(epoch + 1, time.time() - start))
-                # # checkpoint save
-                # #if (epoch + 1) % 1 == 0:
-                #  #   self.checkpoint_manager.save(checkpoint_number=epoch + 1)
-                # print('\n', end='\r')
-                # self.depth_map_loss.reset()
-                # random.shuffle(image_gen.data_list_with_labels)
-                # if (epoch+1)%16==0:
-                #     #increase batch size by 10%
-                #     self.global_batch_size=int( self.global_batch_size+ self.global_batch_size*10/100)
-                #     if self.global_batch_size%2 !=0:
-                #         self.global_batch_size=self.global_batch_size-1
+                    
 
     def save(self):
-        saved_model_path= os.path.join(self.config.LOG_DIR,self.config.SESSION_ID,str(epoch))
-        if not os.path.exists(saved_model_path):
-            os.makedirs(saved_model_path)
+        saved_model_path= '/path/to/model/'
         self.depnet.predict(np.zeros([1,256,256,6],dtype='float32'))
         #self.depnet.save(saved_model_path,save_format='tf')
         tf.saved_model.save(self.depnet,saved_model_path) 
