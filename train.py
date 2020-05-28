@@ -74,7 +74,6 @@ class Model:
         # begin training
         with self.strategy.scope():
             for epoch in range(0,1):
-                step_per_epoch=int(math.floor(len(image_gen.data_list_with_labels)/self.global_batch_size))
                 start = time.time()
                 ### train phase ###
                 iterator = iter(dist_dataset)
