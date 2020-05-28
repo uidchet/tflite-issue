@@ -7,7 +7,7 @@ def convert_model(path,tflite_path):
    #concrete_func.inputs[0].set_shape(Config.INPUT_SHAPE)
    #converter = tf.lite.TFLiteConverter.from_concrete_functions([concrete_func])
    
-   converter = tf.lite.TFLiteConverter.from_saved_model(model)
+   converter = tf.lite.TFLiteConverter.from_saved_model(path)
    converter.allow_custom_ops = True
 
    #converter.optimizations = [tf.lite.Optimize.DEFAULT]
