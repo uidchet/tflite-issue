@@ -1,3 +1,5 @@
+import tensorflow as tf
+
 def convert_model(path,tflite_path):
    tf.keras.backend.clear_session()
    
