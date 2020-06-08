@@ -2,7 +2,7 @@ import tensorflow as tf
 import tensorflow.keras.layers as layers
 
 
-class depnet(tf.keras.models.Model):
+class depnet(tf.keras.Model):
     def __init__(self):
         super(depnet, self).__init__()
         filters=64
