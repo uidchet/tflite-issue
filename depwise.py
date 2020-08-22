@@ -29,7 +29,7 @@ class depnet(tf.keras.Model):
         kernel=(3,3)
         stride=(1,1)
         mp_stride=(2,2)
-        self.conv_inp=tf.keras.layers.Conv2D(filters,(3,3),strides=(1,1),padding='SAME',name='conv_input1')
+        self.conv_inp=Dep_wise_Conv(filters,(3,3),stride=(1,1),_name='conv_input1')
         self.conv1=Dep_wise_Conv(filters*2,kernel,stride=stride,_name='conv_1')
         self.conv2=Dep_wise_Conv(int(filters*2*2),kernel,stride=stride,_name='conv_2')
         self.conv3=Dep_wise_Conv(filters*2,kernel,stride=stride,_name='conv_3')
